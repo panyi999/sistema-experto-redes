@@ -1,5 +1,5 @@
 {
-  "ping_gateway": "fallo",
-  "ip_asignada": "169.254.x.x",
-  "cable_conectado": "si"
+  "ping_gateway_fallo": true,
+  "ip_apipa": true,
+  "cable_conectado": true
 }
