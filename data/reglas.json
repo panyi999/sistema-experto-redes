@@ -1,17 +1,82 @@
 [
-  {"id": "R1", "prioridad": 10, "antecedentes": [{"variable": "ping_gateway", "operador": "==", "valor": "fallo"}, {"variable": "ip_asignada", "operador": "==", "valor": "169.254.x.x"}], "consecuentes": [{"variable": "problema_ip", "valor": "apipa"}]},
-  {"id": "R2", "prioridad": 10, "antecedentes": [{"variable": "ping_gateway", "operador": "==", "valor": "ok"}, {"variable": "ping_dns_externo", "operador": "==", "valor": "fallo"}], "consecuentes": [{"variable": "problema_red", "valor": "dns_caido"}]},
-  {"id": "R3", "prioridad": 10, "antecedentes": [{"variable": "servicio_web", "operador": "==", "valor": "error_500"}, {"variable": "uso_cpu", "operador": ">", "valor": 90}], "consecuentes": [{"variable": "estado_servidor", "valor": "sobrecarga_cpu"}]},
-  {"id": "R4", "prioridad": 10, "antecedentes": [{"variable": "servicio_web", "operador": "==", "valor": "error_500"}, {"variable": "espacio_disco", "operador": "<", "valor": 5}], "consecuentes": [{"variable": "estado_servidor", "valor": "disco_lleno"}]},
-  {"id": "R5", "prioridad": 10, "antecedentes": [{"variable": "latencia_ping", "operador": ">", "valor": 300}, {"variable": "perdida_paquetes", "operador": ">", "valor": 10}], "consecuentes": [{"variable": "calidad_enlace", "valor": "saturado"}]},
-  {"id": "R6", "prioridad": 20, "antecedentes": [{"variable": "problema_ip", "operador": "==", "valor": "apipa"}, {"variable": "cable_conectado", "operador": "==", "valor": "si"}], "consecuentes": [{"variable": "subdiagnostico", "valor": "servidor_dhcp_inaccesible"}]},
-  {"id": "R7", "prioridad": 20, "antecedentes": [{"variable": "problema_red", "operador": "==", "valor": "dns_caido"}, {"variable": "ping_ip_directa", "operador": "==", "valor": "ok"}], "consecuentes": [{"variable": "subdiagnostico", "valor": "falla_resolucion_nombres"}]},
-  {"id": "R8", "prioridad": 20, "antecedentes": [{"variable": "estado_servidor", "operador": "==", "valor": "sobrecarga_cpu"}, {"variable": "proceso_top", "operador": "==", "valor": "mysqld"}], "consecuentes": [{"variable": "causa_raiz", "valor": "bd_consultas_bloqueadas"}]},
-  {"id": "R9", "prioridad": 20, "antecedentes": [{"variable": "estado_servidor", "operador": "==", "valor": "disco_lleno"}, {"variable": "directorio_critico", "operador": "==", "valor": "var_log"}], "consecuentes": [{"variable": "causa_raiz", "valor": "logs_saturados"}]},
-  {"id": "R10", "prioridad": 20, "antecedentes": [{"variable": "calidad_enlace", "operador": "==", "valor": "saturado"}, {"variable": "trafico_p2p", "operador": "==", "valor": "alto"}], "consecuentes": [{"variable": "causa_raiz", "valor": "ancho_banda_consumido"}]},
-  {"id": "R11", "prioridad": 30, "antecedentes": [{"variable": "subdiagnostico", "operador": "==", "valor": "servidor_dhcp_inaccesible"}], "consecuentes": [{"variable": "recomendacion", "valor": "Reiniciar daemon DHCPD y verificar el scope de direcciones en el Router L3"}]},
-  {"id": "R12", "prioridad": 30, "antecedentes": [{"variable": "subdiagnostico", "operador": "==", "valor": "falla_resolucion_nombres"}], "consecuentes": [{"variable": "recomendacion", "valor": "Cambiar servidores DNS primarios a 8.8.8.8 / 1.1.1.1 y purgar caché local con ipconfig /flushdns"}]},
-  {"id": "R13", "prioridad": 30, "antecedentes": [{"variable": "causa_raiz", "operador": "==", "valor": "bd_consultas_bloqueadas"}], "consecuentes": [{"variable": "recomendacion", "valor": "Matar procesos Slow Queries en MySQL/PostgreSQL y optimizar índices de base de datos"}]},
-  {"id": "R14", "prioridad": 30, "antecedentes": [{"variable": "causa_raiz", "operador": "==", "valor": "logs_saturados"}], "consecuentes": [{"variable": "recomendacion", "valor": "Ejecutar logrotate inmediatamente y truncar archivos .log antiguos en /var/log"}]},
-  {"id": "R15", "prioridad": 30, "antecedentes": [{"variable": "causa_raiz", "operador": "==", "valor": "ancho_banda_consumido"}], "consecuentes": [{"variable": "recomendacion", "valor": "Aplicar reglas de QoS en el firewall para limitar tráfico P2P y priorizar HTTP/HTTPS"}]}
+  {
+    "nombre": "R1: Error en Direccionamiento IP",
+    "antecedentes": ["ping_gateway_fallo", "ip_apipa"],
+    "consecuentes": ["fallo_ip_local"]
+  },
+  {
+    "nombre": "R2: Caida de Servicio DNS",
+    "antecedentes": ["ping_gateway_ok", "dns_no_responde"],
+    "consecuentes": ["error_resolucion_nombres"]
+  },
+  {
+    "nombre": "R3: Sobrecarga de Procesamiento",
+    "antecedentes": ["web_error_500", "cpu_alta"],
+    "consecuentes": ["servidor_saturado_cpu"]
+  },
+  {
+    "nombre": "R4: Almacenamiento Crítico",
+    "antecedentes": ["web_error_500", "disco_lleno"],
+    "consecuentes": ["servidor_sin_espacio"]
+  },
+  {
+    "nombre": "R5: Enlace de Red Degradado",
+    "antecedentes": ["alta_latencia", "perdida_paquetes"],
+    "consecuentes": ["red_saturada"]
+  },
+  {
+    "nombre": "R6: Diagnóstico DHCP",
+    "antecedentes": ["fallo_ip_local", "cable_conectado"],
+    "consecuentes": ["diagnostico_servidor_dhcp_caido"]
+  },
+  {
+    "nombre": "R7: Diagnóstico DNS Externo",
+    "antecedentes": ["error_resolucion_nombres", "ping_ip_directa_ok"],
+    "consecuentes": ["diagnostico_dns_falla"]
+  },
+  {
+    "nombre": "R8: Diagnóstico Base de Datos",
+    "antecedentes": ["servidor_saturado_cpu", "proceso_mysql_top"],
+    "consecuentes": ["diagnostico_consultas_bloqueadas"]
+  },
+  {
+    "nombre": "R9: Diagnóstico de Logs",
+    "antecedentes": ["servidor_sin_espacio", "logs_pesados"],
+    "consecuentes": ["diagnostico_logs_saturados"]
+  },
+  {
+    "nombre": "R10: Diagnóstico de Tráfico P2P",
+    "antecedentes": ["red_saturada", "trafico_desconocido_alto"],
+    "consecuentes": ["diagnostico_ancho_banda_agotado"]
+  },
+  {
+    "nombre": "R11: Solución DHCP",
+    "antecedentes": ["diagnostico_servidor_dhcp_caido"],
+    "consecuentes": ["recomendacion_dhcp"],
+    "accion_mensaje": "RECOMENDACIÓN: Reiniciar daemon DHCPD y verificar el scope de direcciones en el Router L3."
+  },
+  {
+    "nombre": "R12: Solución DNS",
+    "antecedentes": ["diagnostico_dns_falla"],
+    "consecuentes": ["recomendacion_dns"],
+    "accion_mensaje": "RECOMENDACIÓN: Cambiar DNS a 8.8.8.8 / 1.1.1.1 y purgar caché local con ipconfig /flushdns."
+  },
+  {
+    "nombre": "R13: Solución Base de Datos",
+    "antecedentes": ["diagnostico_consultas_bloqueadas"],
+    "consecuentes": ["recomendacion_bd"],
+    "accion_mensaje": "RECOMENDACIÓN: Matar procesos 'Slow Queries' en MySQL/PostgreSQL y optimizar índices."
+  },
+  {
+    "nombre": "R14: Solución de Almacenamiento",
+    "antecedentes": ["diagnostico_logs_saturados"],
+    "consecuentes": ["recomendacion_logs"],
+    "accion_mensaje": "RECOMENDACIÓN: Ejecutar logrotate inmediatamente y truncar archivos .log antiguos en /var/log."
+  },
+  {
+    "nombre": "R15: Solución de Ancho de Banda",
+    "antecedentes": ["diagnostico_ancho_banda_agotado"],
+    "consecuentes": ["recomendacion_qos"],
+    "accion_mensaje": "RECOMENDACIÓN: Aplicar reglas de QoS en el firewall para limitar tráfico P2P y priorizar HTTP/HTTPS."
+  }
 ]
